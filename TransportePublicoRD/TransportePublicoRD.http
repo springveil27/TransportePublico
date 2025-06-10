@@ -1,0 +1,6 @@
+@TransportePublicoRD_HostAddress = http://localhost:5201
+
+GET {{TransportePublicoRD_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
