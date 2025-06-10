@@ -1,4 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore.Diagnostics;
+using TransportePublicoRD.Data;
+using TransportePublicoRD.Dto;
 using TransportePublicoRD.Entities;
 
 namespace TransportePublicoRD.Controllers
@@ -7,80 +10,88 @@ namespace TransportePublicoRD.Controllers
     [Route("api/[controller]")]
     public class RoutesController : ControllerBase
     {
-        private List<Line> _lines;
-        public RoutesController()
-        {
-            // Initialize with some dummy data
-            _lines = new List<Line>
-            {
 
-                new Line { Id = 1, Name = "Route A", Code = "A1", Cost = 10.0m, Description = "Route A Description" },
-                new Line { Id = 2, Name = "Route B", Code = "B1", Cost = 15.0m, Description = "Route B Description" },
-                new Line { Id = 3, Name = "Route C", Code = "C1", Cost = 20.0m, Description = "Route C Description" }
-            };
+
+        private readonly DbContextApp _context;
+        public RoutesController(DbContextApp context)
+        {
+            _context = context;
         }
 
         [HttpGet]
         public IActionResult GetRoutes()
         {
-
-            return Ok(_lines);
+            var routes = _context.PublicRoutes.ToList();
+            return Ok(routes);
         }
+
         [HttpGet("{Id}")]
         public IActionResult GetRoute(int Id)
         {
 
-            var line = new Line();
+            var routes = new PublicRoutes();
 
-            line = _lines.FirstOrDefault(l => l.Id == Id);
-            if (line == null)
+            routes = _context.PublicRoutes.FirstOrDefault(l => l.Id == Id);
+            if (routes == null)
             {
                 return NotFound($"Route with ID {Id} not found.");
             }
-            return Ok(line);
+            return Ok(routes);
+
         }
         [HttpPost]
-        public IActionResult CreateRoute([FromBody] Line line)
+        public IActionResult CreateRoute([FromBody]  CreatePublicRouteDto request)
         {
-            if (line == null)
+            if (request == null)
             {
                 return BadRequest("Invalid route data.");
             }
-            line.Id = _lines.Count + 1;
-            _lines.Add(line);
-            return Ok(line);
+            var route = new PublicRoutes
+            {
+                Name = request.Name,
+                Code = request.Code,
+                Cost = request.Cost,
+                Active = request.Active,
+                CreatedDate = DateTime.Now
+            };
+            _context.PublicRoutes.Add(route);
+            _context.SaveChanges();
+            return Ok(route);
         }
 
-        [HttpPut]
-        public IActionResult UpdateRoute([FromBody] Line Line)
+        [HttpPut("{id}")]
+        public IActionResult UpdateRoute(int id, [FromBody] UpdatePublicRouteDto request)
         {
-            if (Line == null)
+            if (request == null || request.Id != id )
             {
                 return BadRequest("Invalid route data.");
             }
-            var line = _lines.FirstOrDefault(l => l.Id == Line.Id);
-            if (line == null)
+            var existingRoutes = _context.PublicRoutes.FirstOrDefault(l => l.Id == id);
+            if (existingRoutes == null)
             {
-                return NotFound($"Route with ID {Line.Id} not found.");
+                return NotFound($"Route with ID {existingRoutes.Id} not found.");
             }
-            line.Name = Line.Name;
-            line.Code = Line.Code;
-            line.Cost = Line.Cost;
-            line.Description = Line.Description;
-            line.UpdatedDate = DateTime.Now;
-            return Ok(_lines);
+            existingRoutes.Name = request.Name;
+            existingRoutes.Code = request.Code;
+            existingRoutes.Cost = request.Cost; 
+           existingRoutes.UpdatedDate = DateTime.Now;
+            existingRoutes.Active = request.Active;
+            _context.Update(existingRoutes);
+            _context.SaveChanges();
+            return NoContent();
         }
 
         [HttpDelete("{Id}")]
         public IActionResult DeleteRoute(int Id)
         {
-            var line = _lines.FirstOrDefault(l => l.Id == Id);
-            if (line == null)
+            var routes = _context.PublicRoutes.FirstOrDefault(l => l.Id == Id);
+            if (routes == null)
             {
                 return NotFound($"Route with ID {Id} not found.");
             }
-            _lines.Remove(line);
-            return Ok(_lines);
+            _context.Remove(routes);
+             _context.SaveChanges();
+            return NoContent();
         }
 
     }
