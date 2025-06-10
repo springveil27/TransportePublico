@@ -1,7 +1,8 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Diagnostics;
 using TransportePublicoRD.Data;
-using TransportePublicoRD.Dto;
+using TransportePublicoRD.Dto.RouteDto;
 using TransportePublicoRD.Entities;
 
 namespace TransportePublicoRD.Controllers
@@ -10,8 +11,6 @@ namespace TransportePublicoRD.Controllers
     [Route("api/[controller]")]
     public class RoutesController : ControllerBase
     {
-
-
         private readonly DbContextApp _context;
         public RoutesController(DbContextApp context)
         {
@@ -19,19 +18,27 @@ namespace TransportePublicoRD.Controllers
         }
 
         [HttpGet]
-        public IActionResult GetRoutes()
+        public IActionResult  GetRoutes()
         {
-            var routes = _context.PublicRoutes.ToList();
+            var routes = _context.PublicRoutes
+                .Include(r => r.Stops.OrderBy(s => s.Order))
+                .Include(r => r.Schedules)
+                .Where(r => r.Active)
+                .ToList();
+
             return Ok(routes);
         }
 
         [HttpGet("{Id}")]
         public IActionResult GetRoute(int Id)
         {
-
             var routes = new PublicRoutes();
 
-            routes = _context.PublicRoutes.FirstOrDefault(l => l.Id == Id);
+            routes = _context.PublicRoutes
+               .Include(r => r.Stops.OrderBy(s => s.Order))
+               .Include(r => r.Schedules)
+               .FirstOrDefault(r => r.Id == Id);
+
             if (routes == null)
             {
                 return NotFound($"Route with ID {Id} not found.");
@@ -94,5 +101,6 @@ namespace TransportePublicoRD.Controllers
             return NoContent();
         }
 
+        
     }
 }

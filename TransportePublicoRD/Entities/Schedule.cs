@@ -9,6 +9,6 @@
         public TimeSpan EndTime { get; set; }
         public int FrequencyMinutes { get; set; }
 
-        public virtual PublicRoutes PublicRoutes { get; set; }
+        public virtual PublicRoutes PublicRoute { get; set; }
     }
 }

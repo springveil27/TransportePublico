@@ -8,6 +8,6 @@
         public int Order { get; set; } 
 
         public int PublicRouteId { get; set; }
-        public virtual PublicRoutes PublicRoutes { get; set; }
+        public virtual PublicRoutes PublicRoute { get; set; }
     }
 }
