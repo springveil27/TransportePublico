@@ -19,4 +19,9 @@
     <PackageReference Include="Swashbuckle.AspNetCore" Version="6.6.2" />
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\TransportePublicoRD.Domain\TransportePublicoRD.Domain.csproj" />
+    <ProjectReference Include="..\TransportePublicoRD.Infrastructure\TransportePublicoRD.Infrastructure.csproj" />
+  </ItemGroup>
+
 </Project>

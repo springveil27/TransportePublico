@@ -1,9 +1,9 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Diagnostics;
-using TransportePublicoRD.Data;
+using TransportePublicoRD.Infrastructure.Data;
 using TransportePublicoRD.Dto.RouteDto;
-using TransportePublicoRD.Entities;
+using TransportePublicoRD.Domain.Entities;
 
 namespace TransportePublicoRD.Controllers
 {

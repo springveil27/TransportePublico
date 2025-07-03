@@ -1,5 +1,5 @@
 using Microsoft.EntityFrameworkCore;
-using TransportePublicoRD.Data;
+using TransportePublicoRD.Infrastructure.Data;
 
 var builder = WebApplication.CreateBuilder(args);
 

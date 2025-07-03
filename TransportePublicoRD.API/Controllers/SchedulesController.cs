@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using TransportePublicoRD.Data;
+using TransportePublicoRD.Infrastructure.Data;
 using TransportePublicoRD.Dto.ScheduleDto;
-using TransportePublicoRD.Entities;
+using TransportePublicoRD.Domain.Entities;
 
 namespace TransportePublicoRD.Controllers
  

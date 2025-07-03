@@ -3,20 +3,17 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
-using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
-using TransportePublicoRD.Data;
+using TransportePublicoRD.Infrastructure.Data;
 
 #nullable disable
 
 namespace TransportePublicoRD.Migrations
 {
     [DbContext(typeof(DbContextApp))]
-    [Migration("20250610073606_init")]
-    partial class init
+    partial class DbContextAppModelSnapshot : ModelSnapshot
     {
-        /// <inheritdoc />
-        protected override void BuildTargetModel(ModelBuilder modelBuilder)
+        protected override void BuildModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
