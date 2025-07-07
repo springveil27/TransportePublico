@@ -1,9 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using TransportePublicoRD.Infrastructure.Data;
-using TransportePublicoRD.Dto;
 using TransportePublicoRD.Dto.StopsDto;
 using TransportePublicoRD.Domain.Entities;
+using TransportePublicoRD.Infrastructure.Data.Repositories;
 
 namespace TransportePublicoRD.Controllers
 {
@@ -11,57 +9,45 @@ namespace TransportePublicoRD.Controllers
     [Route("api/routes/{routeId}/[controller]")]
     public class StopsController : ControllerBase
     {
-        private readonly DbContextApp _context;
+        private readonly StopRepository _stopRepository;
+        private readonly RouteRepository _routeRepository;
 
-        public StopsController(DbContextApp context)
+        public StopsController(StopRepository stopRepository, RouteRepository routeRepository)
         {
-            _context = context;
+            _stopRepository = stopRepository;
+            _routeRepository = routeRepository;
         }
 
         [HttpGet]
-        public IActionResult GetRouteStops(int routeId)
+        public async Task<IActionResult> GetRouteStops(int routeId)
         {
-            var route = _context.PublicRoutes.FirstOrDefault(r => r.Id == routeId);
+            var route = await _routeRepository.GetByIdAsync(routeId);
             if (route == null)
-            {
                 return NotFound($"Route with ID {routeId} not found.");
-            }
 
-            var stops = _context.Stops
-                .Where(s => s.PublicRouteId == routeId)
-                .OrderBy(s => s.Order)
-                .ToList();
-
+            var stops = await _stopRepository.GetByIdAsync(routeId);
             return Ok(stops);
         }
 
         [HttpGet("{stopId}")]
-        public IActionResult GetStop(int routeId, int stopId)
+        public async Task<IActionResult> GetStop( int stopId)
         {
-            var stop = _context.Stops
-                .FirstOrDefault(s => s.Id == stopId && s.PublicRouteId == routeId);
-
+            var stop = await _stopRepository.GetByIdAsync(stopId);
             if (stop == null)
-            {
-                return NotFound($"Stop with ID {stopId} not found in route {routeId}.");
-            }
+                return NotFound($"Stop with ID {stopId} not found.");
 
             return Ok(stop);
         }
 
         [HttpPost]
-        public IActionResult AddStopToRoute(int routeId, [FromBody] CreateStopDto request)
+        public async Task<IActionResult> AddStopToRoute(int routeId, [FromBody] CreateStopDto request)
         {
             if (request == null)
-            {
                 return BadRequest("Invalid stop data.");
-            }
 
-            var route = _context.PublicRoutes.FirstOrDefault(r => r.Id == routeId);
+            var route = await _routeRepository.GetByIdAsync(routeId);
             if (route == null)
-            {
                 return NotFound($"Route with ID {routeId} not found.");
-            }
 
             var stop = new Stop
             {
@@ -71,51 +57,34 @@ namespace TransportePublicoRD.Controllers
                 PublicRouteId = routeId
             };
 
-            _context.Stops.Add(stop);
-            _context.SaveChanges();
-
+            await _stopRepository.AddAsync(stop);
             return Ok(stop);
         }
 
         [HttpPut("{stopId}")]
-        public IActionResult UpdateStop(int routeId, int stopId, [FromBody] UpdateStopDto request)
+        public async Task<IActionResult> UpdateStop(int routeId, int stopId, [FromBody] UpdateStopDto request)
         {
             if (request == null)
-            {
                 return BadRequest("Invalid stop data.");
-            }
 
-            var stop = _context.Stops
-                .FirstOrDefault(s => s.Id == stopId && s.PublicRouteId == routeId);
-
+            var stop = await _stopRepository.GetByIdAsync(stopId);
             if (stop == null)
-            {
                 return NotFound($"Stop with ID {stopId} not found in route {routeId}.");
-            }
 
             stop.Name = request.Name;
             stop.Address = request.Address;
             stop.Order = request.Order;
 
-            _context.Update(stop);
-            _context.SaveChanges();
-
+            await _stopRepository.UpdateAsync(stop);
             return NoContent();
         }
 
         [HttpDelete("{stopId}")]
-        public IActionResult DeleteStop(int routeId, int stopId)
+        public async Task<IActionResult> DeleteStop( int stopId)
         {
-            var stop = _context.Stops
-                .FirstOrDefault(s => s.Id == stopId && s.PublicRouteId == routeId);
-
-            if (stop == null)
-            {
-                return NotFound($"Stop with ID {stopId} not found in route {routeId}.");
-            }
-
-            _context.Remove(stop);
-            _context.SaveChanges();
+              await _stopRepository.DeleteAsync(stopId);
+            if (stopId == null )
+                return NotFound($"Stop with ID {stopId} not found.");
 
             return NoContent();
         }
