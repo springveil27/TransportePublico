@@ -1,8 +1,10 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using TransportePublicoRD.Infrastructure.Interface;
 
-namespace TransportePublicoRD.Infrastructure.Data.Repositories
+namespace TransportePublicoRD.Infrastructure.Repositories
 {
-    public class GenericRepository< T > where T : class
+    //generic repository pattern implementation
+    public class GenericRepository<T> : IRepository<T> where T : class
     {
         private readonly DbContext _context;
         public GenericRepository(DbContext context)
@@ -19,7 +21,7 @@ namespace TransportePublicoRD.Infrastructure.Data.Repositories
         {
             return await _context.Set<T>().FindAsync(id);
         }
-   
+
         public async Task AddAsync(T entity)
         {
             if (entity == null)
@@ -27,7 +29,7 @@ namespace TransportePublicoRD.Infrastructure.Data.Repositories
                 throw new ArgumentNullException(nameof(entity));
             }
             await _context.Set<T>().AddAsync(entity);
-            await _context.SaveChangesAsync();
+
         }
 
         public async Task UpdateAsync(T entity)
@@ -37,7 +39,6 @@ namespace TransportePublicoRD.Infrastructure.Data.Repositories
                 throw new ArgumentNullException(nameof(entity));
             }
             _context.Set<T>().Update(entity);
-            await _context.SaveChangesAsync();
         }
 
         public async Task DeleteAsync(int id)
@@ -48,7 +49,7 @@ namespace TransportePublicoRD.Infrastructure.Data.Repositories
                 throw new KeyNotFoundException($"Entity with id {id} not found.");
             }
             _context.Set<T>().Remove(entity);
-            await _context.SaveChangesAsync();
+
         }
 
 

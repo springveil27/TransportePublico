@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using TransportePublicoRD.Dto.ScheduleDto;
 using TransportePublicoRD.Domain.Entities;
-using TransportePublicoRD.Infrastructure.Data.Repositories;
+using TransportePublicoRD.Infrastructure.Repositories;
 
 namespace TransportePublicoRD.Controllers
 {
@@ -9,30 +9,30 @@ namespace TransportePublicoRD.Controllers
     [Route("api/routes/{routeId}/[controller]")]
     public class SchedulesController : ControllerBase
     {
-        private readonly ScheduleRepository _scheduleRepository;
-        private readonly RouteRepository _routeRepository;
+      
+        private readonly UnitOfWork _unitOfWork;
 
-        public SchedulesController(ScheduleRepository scheduleRepository, RouteRepository routeRepository)
+        public SchedulesController(ScheduleRepository scheduleRepository, RouteRepository routeRepository, UnitOfWork unitOfWork)
         {
-            _scheduleRepository = scheduleRepository;
-            _routeRepository = routeRepository;
+        
+            _unitOfWork = unitOfWork;
         }
 
         [HttpGet]
         public async Task<IActionResult> GetRouteSchedules(int routeId)
         {
-            var route = await _routeRepository.GetByIdAsync(routeId);
+            var route = await _unitOfWork.RouteRepository.GetByIdAsync(routeId);
             if (route == null)
                 return NotFound($"Route with ID {routeId} not found.");
 
-            var schedules = await _scheduleRepository.GetByIdAsync(routeId);
+            var schedules = await _unitOfWork.ScheduleRepository.GetByIdAsync(routeId);
             return Ok(schedules);
         }
 
         [HttpGet("{scheduleId}")]
         public async Task<IActionResult> GetSchedule(int routeId, int scheduleId)
         {
-            var schedule = await _scheduleRepository.GetByIdAsync(scheduleId);
+            var schedule = await _unitOfWork.ScheduleRepository.GetByIdAsync(scheduleId);
             if (schedule == null)
                 return NotFound($"Schedule with ID {scheduleId} not found in route {routeId}.");
 
@@ -45,7 +45,7 @@ namespace TransportePublicoRD.Controllers
             if (request == null)
                 return BadRequest("Invalid schedule data.");
 
-            var route = await _routeRepository.GetByIdAsync(routeId);
+            var route = await _unitOfWork.RouteRepository.GetByIdAsync(routeId);
             if (route == null)
                 return NotFound($"Route with ID {routeId} not found.");
 
@@ -57,7 +57,8 @@ namespace TransportePublicoRD.Controllers
                 FrequencyMinutes = request.FrequencyMinutes
             };
 
-            await _scheduleRepository.AddAsync(schedule);
+            await _unitOfWork.ScheduleRepository.AddAsync(schedule);
+            await _unitOfWork.SaveAsync();
             return Ok(schedule);
         }
 
@@ -67,7 +68,7 @@ namespace TransportePublicoRD.Controllers
             if (request == null)
                 return BadRequest("Invalid schedule data.");
 
-            var schedule = await _scheduleRepository.GetByIdAsync( scheduleId);
+            var schedule = await _unitOfWork.ScheduleRepository.GetByIdAsync( scheduleId);
             if (schedule == null)
                 return NotFound($"Schedule with ID {scheduleId} no found.");
 
@@ -75,17 +76,18 @@ namespace TransportePublicoRD.Controllers
             schedule.EndTime = TimeSpan.Parse(request.EndTime);
             schedule.FrequencyMinutes = request.FrequencyMinutes;
 
-            await _scheduleRepository.UpdateAsync(schedule);
+            await _unitOfWork.ScheduleRepository.UpdateAsync(schedule);
+            await _unitOfWork.SaveAsync();
             return NoContent();
         }
 
         [HttpDelete("{scheduleId}")]
         public async Task<IActionResult> DeleteSchedule(int routeId, int scheduleId)
         {
-             await _scheduleRepository.DeleteAsync(scheduleId);
+             await _unitOfWork.ScheduleRepository.DeleteAsync(scheduleId);
             if (scheduleId == null)
                 return NotFound($"Schedule with ID {scheduleId} not found in route {routeId}.");
-
+            await _unitOfWork.SaveAsync();
             return NoContent();
         }
 

@@ -1,7 +1,7 @@
 ﻿using TransportePublicoRD.Domain.Entities;
 using Microsoft.EntityFrameworkCore;
 
-namespace TransportePublicoRD.Infrastructure.Data;
+namespace TransportePublicoRD.Infrastructure;
 
 public class DbContextApp:DbContext
 {
