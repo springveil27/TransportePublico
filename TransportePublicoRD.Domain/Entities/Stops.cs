@@ -1,4 +1,4 @@
-﻿namespace TransportePublicoRD.Entities
+﻿namespace TransportePublicoRD.Domain.Entities
 {
     public class Stop
     {
