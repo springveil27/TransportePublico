@@ -20,6 +20,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\TransportePublicoRD.Application\TransportePublicoRD.Application.csproj" />
     <ProjectReference Include="..\TransportePublicoRD.Domain\TransportePublicoRD.Domain.csproj" />
     <ProjectReference Include="..\TransportePublicoRD.Infrastructure\TransportePublicoRD.Infrastructure.csproj" />
   </ItemGroup>

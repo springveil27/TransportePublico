@@ -1,8 +1,10 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using TransportePublicoRD.Dto.RouteDto;
+using TransportePublicoRD.Application.Dto;
 using TransportePublicoRD.Domain.Entities;
 using TransportePublicoRD.Infrastructure.Repositories;
 using TransportePublicoRD.Infrastructure.Interface;
+using TransportePublicoRD.Application.Interface;
+
 
 namespace TransportePublicoRD.Controllers
 {
@@ -12,113 +14,46 @@ namespace TransportePublicoRD.Controllers
     public class RoutesController : ControllerBase
     {
         // create controller to manage public routes
-        private readonly IUnitOfWork _unitOfWork;
-        
-        public RoutesController( IUnitOfWork unitOfWork)
+        private readonly IRouteService _routeService;
+        public RoutesController( IRouteService routeService)
         {
-            
-            _unitOfWork = unitOfWork;
+            _routeService = routeService;
         }
 
         // function to get all routes
         [HttpGet]
        public async Task<IActionResult>  GetRoutes()
         {
-            var routes = await _unitOfWork.RouteRepository.GetAllAsync();
-            if (routes == null || !routes.Any())
-            {
-                return NotFound("No routes found.");
-            }
-            var routesWithDetails = routes.Select
-                (r => new
-                {
-                    r.Id,
-                    r.Name,
-                    r.Code,
-                    r.Cost,
-                    r.Active,
-                   
-                    Stops = r.Stops.OrderBy(s => s.Order).Select(s => new
-                    {
-                        s.Id,
-                        s.Name,
-                        s.Order
-                    }),
-                    Schedules = r.Schedules.Select(s => new
-                    {
-                        s.Id,
-                        s.StartTime,
-                        s.EndTime
-                    })
-                }).ToList();
-            return Ok(routesWithDetails);
+           
+            return Ok(await _routeService.GetRoutes());
         }
 
         [HttpGet("{Id}")]
         public async Task<IActionResult> GetRouteById(int Id)
         {
-            var route = await _unitOfWork.RouteRepository.GetByIdAsync(Id);
-
-            if (route == null)
-            {
-                return NotFound($"Route with ID {Id} not found.");
-            }
-
-            return Ok(route);
+   
+            return Ok(await _routeService.GetRouteById(Id));
         }
 
         [HttpPost]
         public async Task<IActionResult> CreateRoute([FromBody]  CreatePublicRouteDto request)
         {
-            if (request == null)
-            {
-                return BadRequest("Invalid route data.");
-            }
-
-            var route = new PublicRoutes
-            {
-                Name = request.Name,
-                Code = request.Code,
-                Cost = request.Cost,
-                Active = request.Active,
-                CreatedDate = DateTime.Now
-            };  
-            await _unitOfWork.RouteRepository.AddAsync(route);
-            await _unitOfWork.SaveAsync();
-            return Ok(route);
+         var routeId = await _routeService.CreateRoute(request);
+            return Ok(routeId);
         }
 
         [HttpPut("{id}")]
-        public async Task<IActionResult> UpdateRoute(int id, [FromBody] UpdatePublicRouteDto request)
+        public async Task<IActionResult> UpdateRoute( [FromBody] UpdatePublicRouteDto request)
         {
-            if (request == null || request.Id != id )
-            {
-                return BadRequest("Invalid route data.");
-            }
-            var existingRoutes = await _unitOfWork.RouteRepository.GetByIdAsync(request.Id);
-            if (existingRoutes == null)
-            {
-                return NotFound($"Route with ID {existingRoutes.Id} not found.");
-            }
-            existingRoutes.Name = request.Name;
-            existingRoutes.Code = request.Code;
-            existingRoutes.Cost = request.Cost; 
-           existingRoutes.UpdatedDate = DateTime.Now;
-            existingRoutes.Active = request.Active;
-          await _unitOfWork.RouteRepository.UpdateAsync(existingRoutes);
-            await _unitOfWork.SaveAsync();
+            await _routeService.UpdateRoute( request);
             return NoContent();
         }
 
         [HttpDelete("{Id}")]
         public async Task<IActionResult> DeleteRoute(int Id)
         {
-            var routes = _unitOfWork.RouteRepository.GetByIdAsync(Id);
-            if (routes == null)
-            {
-                return NotFound($"Route with ID {Id} not found.");
-            }
-           await _unitOfWork.RouteRepository.DeleteAsync(Id);
+            
+          await _routeService.DeleteRoute(Id);
             return NoContent();
         }
 

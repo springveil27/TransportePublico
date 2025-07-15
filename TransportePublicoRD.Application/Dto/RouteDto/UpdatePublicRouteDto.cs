@@ -1,4 +1,4 @@
-﻿namespace TransportePublicoRD.Dto.RouteDto
+﻿namespace TransportePublicoRD.Application.Dto
 {
     public class UpdatePublicRouteDto : CreatePublicRouteDto 
     {

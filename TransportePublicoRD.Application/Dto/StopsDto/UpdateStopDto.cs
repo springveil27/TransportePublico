@@ -1,6 +1,6 @@
 ﻿
 
-namespace TransportePublicoRD.Dto.StopsDto
+namespace TransportePublicoRD.Application.Dto
 {
     public class UpdateStopDto
     {

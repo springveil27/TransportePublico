@@ -1,6 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
-
-namespace TransportePublicoRD.Dto.RouteDto
+﻿
+namespace TransportePublicoRD.Application.Dto
 {
     public class CreatePublicRouteDto
     {

@@ -9,6 +9,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TransportePublicoRD.Infrast
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TransportePublicoRD.Domain", "..\TransportePublicoRD.Domain\TransportePublicoRD.Domain.csproj", "{8740983B-B3FD-420E-ACA0-8497FE783C4D}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TransportePublicoRD.Application", "..\TransportePublicoRD.Application\TransportePublicoRD.Application.csproj", "{12AD2DDF-F6D4-42FF-BD5D-AD1C086683AD}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -27,6 +29,10 @@ Global
 		{8740983B-B3FD-420E-ACA0-8497FE783C4D}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{8740983B-B3FD-420E-ACA0-8497FE783C4D}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{8740983B-B3FD-420E-ACA0-8497FE783C4D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{12AD2DDF-F6D4-42FF-BD5D-AD1C086683AD}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{12AD2DDF-F6D4-42FF-BD5D-AD1C086683AD}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{12AD2DDF-F6D4-42FF-BD5D-AD1C086683AD}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{12AD2DDF-F6D4-42FF-BD5D-AD1C086683AD}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
