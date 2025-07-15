@@ -1,5 +1,7 @@
 using System.Text.Json.Serialization;
 using Microsoft.EntityFrameworkCore;
+using TransportePublicoRD.Application.Interface;
+using TransportePublicoRD.Application.Services;
 using TransportePublicoRD.Infrastructure;
 using TransportePublicoRD.Infrastructure.Interface;
 using TransportePublicoRD.Infrastructure.Repositories;
@@ -14,6 +16,9 @@ builder.Services.AddScoped<IRouteRepository,RouteRepository>();
 builder.Services.AddScoped<IScheduleRepository,ScheduleRepository>();
 builder.Services.AddScoped<IStopRepository,StopRepository>();
 builder.Services.AddScoped<IUnitOfWork,UnitOfWork>();
+builder.Services.AddScoped<IRouteService,RouteService>();
+builder.Services.AddScoped<ISchedulesService, SchedulesService>();
+builder.Services.AddScoped<IStopsService, StopsService>();
 
 builder.Services.AddControllers().AddJsonOptions(options =>
 {
