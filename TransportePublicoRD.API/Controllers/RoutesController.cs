@@ -35,6 +35,21 @@ namespace TransportePublicoRD.Controllers
             return Ok(await _routeService.GetRouteById(Id));
         }
 
+        [HttpGet("search")]
+        public async Task<IActionResult> SearchRoutes(
+            [FromQuery] string? name = null,
+            [FromQuery] string? origin = null,
+           [FromQuery] string? destination = null)
+        {
+            if (string.IsNullOrEmpty(name) && string.IsNullOrEmpty(origin) && string.IsNullOrEmpty(destination))
+            {
+                return BadRequest("At least one search parameter (name, origin, or destination) must be provided.");
+            }
+
+            var routes = await _routeService.SearchRoutes(name, origin, destination);
+            return Ok(routes);
+        }
+
         [HttpPost]
         public async Task<IActionResult> CreateRoute([FromBody]  CreatePublicRouteDto request)
         {

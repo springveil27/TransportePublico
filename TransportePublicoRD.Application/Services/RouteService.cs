@@ -32,6 +32,8 @@ namespace TransportePublicoRD.Application.Services
                     Id = r.Id,
                     Name = r.Name,
                     Code = r.Code,
+                    Origin = r.Origin,
+                    Destination = r.Destination,
                     Cost = r.Cost,
                     Active = r.Active,
                     Stops = r.Stops.Select(s => new StopsDto
@@ -65,6 +67,8 @@ namespace TransportePublicoRD.Application.Services
                 Id = route.Id,
                 Name = route.Name,
                 Code = route.Code,
+                Origin = route.Origin,
+                Destination = route.Destination,
                 Cost = route.Cost,
                 Active = route.Active,
 
@@ -72,6 +76,62 @@ namespace TransportePublicoRD.Application.Services
             return routeTrans;
         }
 
+        public async Task<List<RouteDto>> SearchRoutes(string? name, string? origin, string? destination)
+        {
+            var routes = await _unitOfWork.RouteRepository.GetAllAsync();
+
+            if (!string.IsNullOrEmpty(name))
+            {
+                routes = routes.Where(r => r.Name.ToLower().Contains(name.ToLower())).ToList();
+
+            }
+
+            if (!string.IsNullOrEmpty(origin))
+            {
+                routes = routes.Where(r => r.Stops.Any(s =>
+                    s.Name.ToLower().Contains(origin.ToLower()) ||
+                    s.Address.ToLower().Contains(origin.ToLower()))).ToList();
+            }
+
+            if (!string.IsNullOrEmpty(destination))
+            {
+                routes = routes.Where(r => r.Stops.Any(s =>
+                    s.Name.ToLower().Contains(destination.ToLower()) ||
+                    s.Address.ToLower().Contains(destination.ToLower()))).ToList();
+            }
+
+            if (!routes.Any())
+            {
+                return new List<RouteDto>();
+            }
+
+            return routes.Select(r => new RouteDto
+            {
+                Id = r.Id,
+                Name = r.Name,
+                Code = r.Code,
+                Origin = r.Origin,
+                Destination = r.Destination,
+                Cost = r.Cost,
+                Active = r.Active,
+                Stops = r.Stops.Select(s => new StopsDto
+                {
+                    Id = s.Id,
+                    Name = s.Name,
+                    Address = s.Address,
+                    Order = s.Order,
+                    PublicRouteId = s.PublicRouteId
+                }).OrderBy(s => s.Order).ToList(),
+                Schedules = r.Schedules.Select(s => new ScheduleDto
+                {
+                    Id = s.Id,
+                    StartTime = s.StartTime,
+                    EndTime = s.EndTime,
+                    FrequencyMinutes = s.FrequencyMinutes,
+                    PublicRouteId = s.PublicRouteId
+                }).ToList()
+            }).ToList();
+        }
 
         public async Task<int> CreateRoute(CreatePublicRouteDto request)
         {
@@ -85,6 +145,8 @@ namespace TransportePublicoRD.Application.Services
                 Name = request.Name,
                 Code = request.Code,
                 Cost = request.Cost,
+                Origin = request.Origin,
+                Destination = request.Destination,
                 Active = request.Active,
                 CreatedDate = DateTime.Now
             };
@@ -108,6 +170,8 @@ namespace TransportePublicoRD.Application.Services
             existingRoute.Id = request.Id;
             existingRoute.Name = request.Name;
             existingRoute.Code = request.Code;
+            existingRoute.Origin = request.Origin;
+            existingRoute.Destination = request.Destination;
             existingRoute.Cost = request.Cost;
             existingRoute.UpdatedDate = DateTime.Now;
             existingRoute.Active = request.Active;
@@ -128,5 +192,6 @@ namespace TransportePublicoRD.Application.Services
 
         }
 
+        
     }
 }

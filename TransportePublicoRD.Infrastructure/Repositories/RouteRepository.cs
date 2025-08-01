@@ -17,9 +17,23 @@ namespace TransportePublicoRD.Infrastructure.Repositories
         {
             _context = context;
         }
-        
-        
-        
+
+
+        public async Task<List<PublicRoutes>> GetAllWithDetailsAsync()
+        {
+            return await _context.PublicRoutes
+                .Include(r => r.Stops.OrderBy(s => s.Order)) 
+                .Include(r => r.Schedules)                     
+                .Where(r => r.Active)                          
+                .ToListAsync();
+        }
+        public async Task<PublicRoutes> GetByIdWithDetailsAsync(int id)
+        {
+            return await _context.PublicRoutes
+                .Include(r => r.Stops.OrderBy(s => s.Order))  
+                .Include(r => r.Schedules)                     
+                .FirstOrDefaultAsync(r => r.Id == id);
+        }
 
     }
 }
