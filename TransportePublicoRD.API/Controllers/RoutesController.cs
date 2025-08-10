@@ -35,6 +35,21 @@ namespace TransportePublicoRD.Controllers
             return Ok(await _routeService.GetRouteById(Id));
         }
 
+        [HttpGet("search")]
+        public async Task<IActionResult> SearchRoutes(
+            [FromQuery] string? name = null,
+            [FromQuery] string? origin = null,
+           [FromQuery] string? destination = null)
+        {
+            if (string.IsNullOrEmpty(name) && string.IsNullOrEmpty(origin) && string.IsNullOrEmpty(destination))
+            {
+                return BadRequest("At least one search parameter (name, origin, or destination) must be provided.");
+            }
+
+            var routes = await _routeService.SearchRoutes(name, origin, destination);
+            return Ok(routes);
+        }
+
         [HttpPost]
         public async Task<IActionResult> CreateRoute([FromBody]  CreatePublicRouteDto request)
         {
@@ -43,8 +58,13 @@ namespace TransportePublicoRD.Controllers
         }
 
         [HttpPut("{id}")]
-        public async Task<IActionResult> UpdateRoute( [FromBody] UpdatePublicRouteDto request)
+        public async Task<IActionResult> UpdateRoute( int id, [FromBody] UpdatePublicRouteDto request)
         {
+            if(id != request.Id)
+            {
+                return BadRequest("la ruta en la url no coincide con la del cuerpo.");
+            }
+            
             await _routeService.UpdateRoute( request);
             return NoContent();
         }

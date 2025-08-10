@@ -9,5 +9,7 @@ namespace TransportePublicoRD.Application.Interface
         Task<RouteDto> GetRouteById(int Id);
         Task<List<RouteDto>> GetRoutes();
         Task UpdateRoute( UpdatePublicRouteDto request);
+
+        Task<List<RouteDto>> SearchRoutes(string? name, string? origin, string? destination);
     }
 }

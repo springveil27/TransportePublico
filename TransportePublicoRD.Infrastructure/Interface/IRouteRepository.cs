@@ -4,7 +4,9 @@ namespace TransportePublicoRD.Infrastructure.Interface
 {
     public interface IRouteRepository : IRepository<PublicRoutes>
     {
-        // Additional methods specific to PublicRoutes can be added here
+        Task<List<PublicRoutes>> GetAllWithDetailsAsync();
+        Task<PublicRoutes> GetByIdWithDetailsAsync(int id);
+
     }
-    
+
 }
