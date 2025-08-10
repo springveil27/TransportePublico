@@ -58,8 +58,13 @@ namespace TransportePublicoRD.Controllers
         }
 
         [HttpPut("{id}")]
-        public async Task<IActionResult> UpdateRoute( [FromBody] UpdatePublicRouteDto request)
+        public async Task<IActionResult> UpdateRoute( int id, [FromBody] UpdatePublicRouteDto request)
         {
+            if(id != request.Id)
+            {
+                return BadRequest("la ruta en la url no coincide con la del cuerpo.");
+            }
+            
             await _routeService.UpdateRoute( request);
             return NoContent();
         }
