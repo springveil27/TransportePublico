@@ -47,6 +47,9 @@ body {
     margin-bottom: 2rem;
     box-shadow: 0 2px 10px rgba(0,0,0,0.1);
     gap: 0.5rem;
+    position: sticky;      /* Mantiene las pestañas arriba al hacer scroll */
+    top: 0;
+    z-index: 10;
 }
 
 .nav-tab {
@@ -76,6 +79,17 @@ body {
     color: white;
     transform: translateY(-2px);
     box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+}
+
+/* Si quieres que las pestañas estén justo debajo del header */
+.header + .container .nav-tabs {
+    margin-top: 0;
+    margin-bottom: 2rem;
+}
+
+/* Opcional: agrega sombra para destacar las pestañas */
+.nav-tabs {
+    box-shadow: 0 4px 12px rgba(102, 126, 234, 0.08);
 }
 
 /* Tab Content */
@@ -498,6 +512,8 @@ body {
     
     .nav-tabs {
         flex-direction: column;
+        position: static;
+        box-shadow: none;
     }
     
     .nav-tab {
